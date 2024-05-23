@@ -21,11 +21,10 @@ use gif::{
     driver::image_driver,
     // driver::{image_driver, texture_atlas_driver},
     loader::AnimatedGifLoader,
-    AnimatedGif,
 };
 
 mod gif;
-pub use gif::{AnimatedGifImageBundle, AnimatedGifTextureAtlasBundle};
+pub use gif::{AnimatedGif, AnimatedGifImageBundle, AnimatedGifTextureAtlasBundle};
 
 pub struct AnimatedGifPlugin {
     // prepare_asset_set: PrepareAssetSet,
