@@ -1,0 +1,9 @@
+[package]
+name = "vleue_kinetoscope"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.13"
+image = { version = "0.24", default-features = false, features = ["gif"] }
+rectangle-pack = "0.4"
