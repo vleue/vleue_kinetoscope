@@ -2,6 +2,16 @@
 name = "vleue_kinetoscope"
 version = "0.1.0"
 edition = "2021"
+exclude = ["animated-gif.webp"]
+authors = ["François Mockers <francois.mockers@vleue.com>"]
+description = "Animated GIF player for Bevy"
+repository = "https://github.com/vleue/vleue_kinetoscope"
+homepage = "https://github.com/vleue/vleue_kinetoscope"
+documentation = "https://docs.rs/vleue_kinetoscope"
+keywords = ["bevy", "animation", "gif"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+categories = ["game-development"]
 
 [dependencies]
 bevy = { version = "0.13", default-features = false, features = [
