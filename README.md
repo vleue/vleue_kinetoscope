@@ -23,7 +23,8 @@ use vleue_kinetoscope::AnimatedGifPlugin;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        // Usually included with `DefaultPlugins`
+        .add_plugins(AssetPlugin::default())
         .add_plugins(AnimatedGifPlugin);
 }
 ```
