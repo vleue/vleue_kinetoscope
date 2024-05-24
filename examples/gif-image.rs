@@ -5,7 +5,7 @@ use vleue_kinetoscope::{AnimatedGifController, AnimatedGifImageBundle, AnimatedG
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_plugins(AnimatedGifPlugin::default())
+        .add_plugins(AnimatedGifPlugin)
         .add_systems(Startup, setup)
         .add_systems(Update, log_updates)
         .run();
@@ -16,6 +16,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands.spawn(AnimatedGifImageBundle {
         animated_gif: asset_server.load("Geneva_mechanism_6spoke_animation.gif"),
+        transform: Transform::from_xyz(0.0, -75.0, 0.0).with_scale(Vec3::splat(2.4)),
         ..default()
     });
 
@@ -83,6 +84,6 @@ fn log_updates(mut text: Query<&mut Text>, gif: Query<Ref<AnimatedGifController>
     if gif.is_changed() {
         text.single_mut().sections[1].value = format!("{}", gif.play_count());
         text.single_mut().sections[3].value = format!("{:>4}", gif.current_frame());
-        text.single_mut().sections[5].value = format!("{}", gif.frame_count());
+        text.single_mut().sections[5].value = format!("{}", gif.frame_count() - 1);
     }
 }

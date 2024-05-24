@@ -1,5 +1,3 @@
-use std::marker::PhantomData;
-
 use bevy::prelude::*;
 
 use gif::driver::image_driver;
@@ -9,17 +7,7 @@ pub use gif::{
     loader::AnimatedGifLoader, AnimatedGif, AnimatedGifController, AnimatedGifImageBundle,
 };
 
-pub struct AnimatedGifPlugin {
-    phantom: PhantomData<fn() -> AnimatedGif>,
-}
-
-impl Default for AnimatedGifPlugin {
-    fn default() -> Self {
-        Self {
-            phantom: PhantomData,
-        }
-    }
-}
+pub struct AnimatedGifPlugin;
 
 impl Plugin for AnimatedGifPlugin {
     fn build(&self, app: &mut App) {
