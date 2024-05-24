@@ -41,6 +41,12 @@ impl AnimatedGifController {
     pub fn frame_count(&self) -> usize {
         self.frame_count
     }
+
+    /// Reset the animation to the first frame.
+    pub fn reset(&mut self) {
+        self.current_frame = usize::MAX;
+        self.play_count = 0;
+    }
 }
 
 /// A bundle of components to create an animated gif image.

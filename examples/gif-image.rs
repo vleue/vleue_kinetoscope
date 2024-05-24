@@ -7,7 +7,7 @@ fn main() {
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(AnimatedGifPlugin)
         .add_systems(Startup, setup)
-        .add_systems(Update, log_updates)
+        .add_systems(Update, (log_updates, reset))
         .run();
 }
 
@@ -16,7 +16,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands.spawn(AnimatedGifImageBundle {
         animated_gif: asset_server.load("Geneva_mechanism_6spoke_animation.gif"),
-        transform: Transform::from_xyz(0.0, -75.0, 0.0).with_scale(Vec3::splat(2.4)),
+        transform: Transform::from_xyz(0.0, -75.0, 0.0).with_scale(Vec3::splat(2.0)),
         ..default()
     });
 
@@ -85,5 +85,11 @@ fn log_updates(mut text: Query<&mut Text>, gif: Query<Ref<AnimatedGifController>
         text.single_mut().sections[1].value = format!("{}", gif.play_count());
         text.single_mut().sections[3].value = format!("{:>4}", gif.current_frame());
         text.single_mut().sections[5].value = format!("{}", gif.frame_count() - 1);
+    }
+}
+
+fn reset(keyboard_input: Res<ButtonInput<KeyCode>>, mut gif: Query<&mut AnimatedGifController>) {
+    if keyboard_input.just_pressed(KeyCode::Space) {
+        gif.single_mut().reset();
     }
 }

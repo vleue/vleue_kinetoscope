@@ -20,9 +20,11 @@ pub(crate) fn image_driver(
             continue;
         };
 
-        if let Ok((_, mut timer, mut image)) = playing_gifs.get_mut(entity) {
-            if !gif.frames.iter().any(|f| f.image == *image) {
-                *timer = AnimatedGifController {
+        if let Ok((_, mut controller, mut image)) = playing_gifs.get_mut(entity) {
+            if controller.current_frame == usize::MAX
+                || !gif.frames.iter().any(|f| f.image == *image)
+            {
+                *controller = AnimatedGifController {
                     timer: Timer::new(
                         Duration::from_millis(gif.frames[0].delay.0 as u64),
                         TimerMode::Repeating,
