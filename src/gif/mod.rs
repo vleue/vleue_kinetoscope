@@ -3,15 +3,19 @@ use bevy::prelude::*;
 pub(crate) mod driver;
 pub(crate) mod loader;
 
+/// An animated gif asset.
 #[derive(Clone, Asset, TypePath)]
 pub struct AnimatedGif {
-    pub(crate) frames: Vec<Frame>,
+    /// List of frames of the animated gif.
+    pub frames: Vec<Frame>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Frame {
-    pub(crate) delay: (u32, u32),
-    pub(crate) image: Handle<Image>,
+    /// Delay of this frame
+    pub delay: (u32, u32),
+    /// Handle to the image of this frame.
+    pub image: Handle<Image>,
 }
 
 /// Component to help control the animation of an [`AnimatedGif`].
@@ -39,6 +43,7 @@ impl AnimatedGifController {
     }
 }
 
+/// A bundle of components to create an animated gif image.
 #[derive(Bundle, Clone, Default)]
 pub struct AnimatedGifImageBundle {
     /// Handle to the [`AnimatedGif`] asset to be drawn.

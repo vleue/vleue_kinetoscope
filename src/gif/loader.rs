@@ -23,7 +23,8 @@ impl<'a, A: Asset> SubAssetLoader<A> for &mut LoadContext<'a> {
     }
 }
 
-#[derive(Default)]
+/// Loader for animated gifs.
+#[derive(Default, Clone, Copy)]
 pub struct AnimatedGifLoader;
 
 impl AnimatedGifLoader {

@@ -1,3 +1,15 @@
+#![warn(
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    unsafe_code,
+    unstable_features,
+    unused_import_braces,
+    unused_qualifications,
+    missing_docs
+)]
+#![doc = include_str!("../README.md")]
+
 use bevy::prelude::*;
 
 use gif::driver::image_driver;
@@ -7,6 +19,8 @@ pub use gif::{
     loader::AnimatedGifLoader, AnimatedGif, AnimatedGifController, AnimatedGifImageBundle,
 };
 
+/// A plugin for loading and displaying animated gifs.
+#[derive(Copy, Clone)]
 pub struct AnimatedGifPlugin;
 
 impl Plugin for AnimatedGifPlugin {
