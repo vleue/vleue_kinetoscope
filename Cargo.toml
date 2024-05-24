@@ -1,6 +1,6 @@
 [package]
 name = "vleue_kinetoscope"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 exclude = ["animated-gif.webp"]
 authors = ["François Mockers <francois.mockers@vleue.com>"]
