@@ -17,7 +17,7 @@ categories = ["game-development"]
 bevy = { version = "0.13", default-features = false, features = [
     "bevy_sprite",
 ] }
-image = { version = "0.24", default-features = false, features = ["gif"] }
+image = { version = "0.25", default-features = false, features = ["gif"] }
 
 [dev-dependencies]
 bevy = { version = "0.13", default-features = false, features = [
