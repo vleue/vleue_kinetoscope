@@ -4,6 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "0.13"
+bevy = { version = "0.13", default-features = false, features = [
+    "bevy_sprite",
+] }
 image = { version = "0.24", default-features = false, features = ["gif"] }
-rectangle-pack = "0.4"
+
+[dev-dependencies]
+bevy = { version = "0.13", default-features = false, features = [
+    "bevy_sprite",
+    "bevy_ui",
+    "bevy_winit",
+    "default_font",
+] }
