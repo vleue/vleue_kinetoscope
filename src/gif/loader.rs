@@ -1,9 +1,7 @@
-use std::future::Future;
 use std::io::Cursor;
 
 use bevy::asset::io::Reader;
 use bevy::asset::{AssetLoader, AsyncReadExt, LoadContext};
-use bevy::utils::ConditionalSendFuture;
 use bevy::{prelude::*, render::render_asset::RenderAssetUsages};
 
 use image::{codecs::gif::GifDecoder, AnimationDecoder, DynamicImage};
