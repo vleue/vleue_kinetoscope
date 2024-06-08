@@ -44,3 +44,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 ```
+
+## Bevy Support
+
+|Bevy|vleue_kinetoscope|
+|---|---|
+|main|main|
+|0.14|0.2|
+|0.13|0.1|

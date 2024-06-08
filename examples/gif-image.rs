@@ -84,7 +84,7 @@ fn log_updates(mut text: Query<&mut Text>, gif: Query<Ref<AnimatedGifController>
     if gif.is_changed() {
         text.single_mut().sections[1].value = format!("{}", gif.play_count());
         text.single_mut().sections[3].value = format!("{:>4}", gif.current_frame());
-        text.single_mut().sections[5].value = format!("{}", gif.frame_count() - 1);
+        text.single_mut().sections[5].value = format!("{}", gif.frame_count() as i32 - 1);
     }
 }
 
