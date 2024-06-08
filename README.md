@@ -6,7 +6,7 @@
 [![Bevy Tracking](https://img.shields.io/badge/Bevy%20tracking-main-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 [![CI](https://github.com/vleue/vleue_kinetoscope/actions/workflows/ci.yml/badge.svg)](https://github.com/vleue/vleue_kinetoscope/actions/workflows/ci.yml)
 
-Animated GIF player for Bevy.
+Animated GIF and WebP player for Bevy.
 
 ![animated-gif](https://raw.githubusercontent.com/vleue/vleue_kinetoscope/main/animated-gif.webp)
 
@@ -19,27 +19,27 @@ Add the plugin to your app:
 
 ```rust
 use bevy::prelude::*;
-use vleue_kinetoscope::AnimatedGifPlugin;
+use vleue_kinetoscope::AnimatedImagePlugin;
 
 fn main() {
     App::new()
         // Usually included with `DefaultPlugins`
         .add_plugins(AssetPlugin::default())
-        .add_plugins(AnimatedGifPlugin);
+        .add_plugins(AnimatedImagePlugin);
 }
 ```
 
 ### Play an animated gif
 
-Spawn an entity with the bundle `AnimatedGifImageBundle`
+Spawn an entity with the bundle `AnimatedImageBundle`
 
 ```rust
 use bevy::prelude::*;
 use vleue_kinetoscope::*;
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(AnimatedGifImageBundle {
-        animated_gif: asset_server.load("Geneva_mechanism_6spoke_animation.gif"),
+    commands.spawn(AnimatedImageBundle {
+        animated_image: asset_server.load("Geneva_mechanism_6spoke_animation.gif"),
         ..default()
     });
 }
