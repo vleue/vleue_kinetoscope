@@ -41,11 +41,11 @@ impl AnimatedImageLoader {
                 #[cfg(feature = "gif")]
                 {
                     let decoder = image::codecs::gif::GifDecoder::new(Cursor::new(bytes))
-                        .map_err(|err| AnimatedImageLoaderError::DecodingError(err))?;
+                        .map_err(AnimatedImageLoaderError::DecodingError)?;
                     let frames = decoder.into_frames();
                     frames
                         .collect_frames()
-                        .map_err(|err| AnimatedImageLoaderError::DecodingError(err))?
+                        .map_err(AnimatedImageLoaderError::DecodingError)?
                 }
                 #[cfg(not(feature = "gif"))]
                 {
@@ -58,11 +58,11 @@ impl AnimatedImageLoader {
                 #[cfg(feature = "webp")]
                 {
                     let decoder = image::codecs::webp::WebPDecoder::new(Cursor::new(bytes))
-                        .map_err(|err| AnimatedImageLoaderError::DecodingError(err))?;
+                        .map_err(AnimatedImageLoaderError::DecodingError)?;
                     let frames = decoder.into_frames();
                     frames
                         .collect_frames()
-                        .map_err(|err| AnimatedImageLoaderError::DecodingError(err))?
+                        .map_err(AnimatedImageLoaderError::DecodingError)?
                 }
                 #[cfg(not(feature = "webp"))]
                 {
@@ -97,7 +97,7 @@ impl AnimatedImageLoader {
         app: &mut App,
     ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
         let mut images = app.world_mut().resource_mut::<Assets<Image>>();
-        let bytes = std::fs::read(&path).map_err(|err| AnimatedImageLoaderError::IoError(err))?;
+        let bytes = std::fs::read(&path).map_err(AnimatedImageLoaderError::IoError)?;
         let gif = Self::internal_load(bytes, &mut *images, Path::new(&path))?;
         Ok(app
             .world_mut()
@@ -130,7 +130,7 @@ impl AssetLoader for AnimatedImageLoader {
         reader
             .read_to_end(&mut bytes)
             .await
-            .map_err(|err| AnimatedImageLoaderError::IoError(err))?;
+            .map_err(AnimatedImageLoaderError::IoError)?;
         let path = load_context.path().to_owned();
         let gif = Self::internal_load(bytes, load_context, &path)?;
         Ok(gif)

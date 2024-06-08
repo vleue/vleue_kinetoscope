@@ -11,10 +11,19 @@ fn main() {
         .run();
 }
 
-#[derive(Component, Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Component, Clone, Copy, PartialEq, Eq)]
 enum Image {
     Gif,
     Webp,
+}
+
+impl std::fmt::Display for Image {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Image::Gif => write!(f, "GIF"),
+            Image::Webp => write!(f, "WebP"),
+        }
+    }
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&Window>) {
@@ -55,6 +64,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&
             .with_children(|parent| {
                 parent.spawn((
                     TextBundle::from_sections(vec![
+                        TextSection {
+                            value: format!("{}\n", kind),
+                            style: TextStyle {
+                                font_size: 60.0,
+                                ..default()
+                            },
+                        },
                         TextSection {
                             value: "play count: ".to_string(),
                             style: TextStyle {
@@ -97,13 +113,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&
                                 ..default()
                             },
                         },
-                        TextSection {
-                            value: format!("\n{:?}", kind),
-                            style: TextStyle {
-                                font_size: 20.0,
-                                ..default()
-                            },
-                        },
                     ]),
                     kind,
                 ));
@@ -121,9 +130,9 @@ fn log_updates(
                 if image_kind != text_kind {
                     continue;
                 }
-                text.sections[1].value = format!("{}", animated_image.play_count());
-                text.sections[3].value = format!("{:>4}", animated_image.current_frame());
-                text.sections[5].value = format!("{}", animated_image.frame_count() as i32 - 1);
+                text.sections[2].value = format!("{}", animated_image.play_count());
+                text.sections[4].value = format!("{:>4}", animated_image.current_frame());
+                text.sections[6].value = format!("{}", animated_image.frame_count() as i32 - 1);
             }
         }
     }
