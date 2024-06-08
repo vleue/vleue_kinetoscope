@@ -1,6 +1,6 @@
 [package]
 name = "vleue_kinetoscope"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 exclude = ["animated-gif.webp"]
 authors = ["François Mockers <francois.mockers@vleue.com>"]
@@ -13,11 +13,18 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 categories = ["game-development"]
 
+[features]
+default = ["gif", "webp"]
+gif = ["image/gif"]
+webp = ["image/webp"]
+
+
 [dependencies]
+image = { version = "0.25", default-features = false }
+thiserror = "1.0"
 bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "bevy_sprite",
 ] }
-image = { version = "0.25", default-features = false, features = ["gif"] }
 
 [dev-dependencies]
 bevy = { version = "0.14.0-rc.2", default-features = false, features = [
@@ -31,3 +38,9 @@ bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "ktx2",
     "zstd",
 ] }
+
+[patch.crates-io]
+# For webp support - https://github.com/image-rs/image/pull/2228
+image = { git = "https://github.com/image-rs/image" }
+# For webp support - https://github.com/image-rs/image-webp/pull/76
+image-webp = { git = "https://github.com/image-rs/image-webp" }
