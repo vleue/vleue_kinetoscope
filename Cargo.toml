@@ -22,21 +22,17 @@ webp = ["image/webp"]
 [dependencies]
 image = { version = "0.25", default-features = false }
 thiserror = "1.0"
-bevy = { version = "0.14.0-rc.3", default-features = false, features = [
+bevy = { version = "0.14.0-rc.4", default-features = false, features = [
     "bevy_sprite",
 ] }
 
 [dev-dependencies]
-bevy = { version = "0.14.0-rc.3", default-features = false, features = [
+bevy = { version = "0.14.0-rc.4", default-features = false, features = [
     "bevy_sprite",
     "bevy_ui",
     "bevy_winit",
     "default_font",
     "x11",
-    # TODO: remove after Bevy fix
-    "bevy_pbr",
-    "ktx2",
-    "zstd",
 ] }
 
 [patch.crates-io]
