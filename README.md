@@ -45,6 +45,18 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 ```
 
+### WebP Support
+
+Animated WebP is currently broken in release versions of dependencies, and need patches to work properly:
+
+```toml
+[patch.crates-io]
+# For webp support - https://github.com/image-rs/image/pull/2228
+image = { git = "https://github.com/image-rs/image" }
+# For webp support - https://github.com/image-rs/image-webp/pull/76
+image-webp = { git = "https://github.com/image-rs/image-webp" }
+```
+
 ## Bevy Support
 
 |Bevy|vleue_kinetoscope|
