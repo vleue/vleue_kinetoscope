@@ -121,7 +121,7 @@ impl AnimatedImageLoader {
     ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
         let mut images = app.world_mut().resource_mut::<Assets<Image>>();
         let bytes = bytes.to_vec();
-        let gif = Self::internal_load(bytes, &mut *images, &Path::new("").with_extension(extension))?;
+        let gif = Self::internal_load(bytes, &mut *images, Path::new(&format!("foo.{extension}")))?;
         Ok(app
             .world_mut()
             .resource_mut::<Assets<AnimatedImage>>()
