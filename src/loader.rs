@@ -105,32 +105,23 @@ impl AnimatedImageLoader {
             .add(gif))
     }
 
-    /// For gif that need to be loaded immediately, during app setup.
-    /// This can be useful if the gif is meant to be played as a loading screen.
+    /// For animated image that need to be loaded immediately, during app setup.
+    /// This can be useful if the video is meant to be played as a loading screen.
     /// Use `included_bytes!` macro to load the bytes.
-    pub fn load_now_gif_bytes(
+    /// # Example
+    /// ```
+    /// # let mut app = App::new();
+    /// let bytes = include_bytes!("../assets/foo.gif");
+    /// let handle = AnimatedImageLoader::load_now_from_bytes(bytes, "gif", app).unwrap()
+    /// ```
+    pub fn load_now_from_bytes(
         bytes: &[u8],
+        extension: &str,
         app: &mut App,
     ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
         let mut images = app.world_mut().resource_mut::<Assets<Image>>();
         let bytes = bytes.to_vec();
-        let gif = Self::internal_load(bytes, &mut *images, Path::new("foo.gif"))?;
-        Ok(app
-            .world_mut()
-            .resource_mut::<Assets<AnimatedImage>>()
-            .add(gif))
-    }
-
-    /// For webp that need to be loaded immediately, during app setup.
-    /// This can be useful if the webp is meant to be played as a loading screen.
-    /// Use `included_bytes!` macro to load the bytes.
-    pub fn load_now_webp_bytes(
-        bytes: &[u8],
-        app: &mut App,
-    ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
-        let mut images = app.world_mut().resource_mut::<Assets<Image>>();
-        let bytes = bytes.to_vec();
-        let gif = Self::internal_load(bytes, &mut *images, Path::new("foo.webp"))?;
+        let gif = Self::internal_load(bytes, &mut *images, &Path::new("").with_extension(extension))?;
         Ok(app
             .world_mut()
             .resource_mut::<Assets<AnimatedImage>>()
