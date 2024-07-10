@@ -107,7 +107,8 @@ impl AnimatedImageLoader {
 
     /// For gif that need to be loaded immediately, during app setup.
     /// This can be useful if the gif is meant to be played as a loading screen.
-    pub fn load_now_gif_from_bytes(
+    /// Use `included_bytes!` macro to load the bytes.
+    pub fn load_now_from_bytes_gif(
         bytes: &[u8],
         app: &mut App,
     ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
@@ -120,9 +121,10 @@ impl AnimatedImageLoader {
             .add(gif))
     }
 
-    /// For gif that need to be loaded immediately, during app setup.
-    /// This can be useful if the gif is meant to be played as a loading screen.
-    pub fn load_now_webp_from_bytes(
+    /// For webp that need to be loaded immediately, during app setup.
+    /// This can be useful if the webp is meant to be played as a loading screen.
+    /// Use `included_bytes!` macro to load the bytes.
+    pub fn load_now_from_bytes_webp(
         bytes: &[u8],
         app: &mut App,
     ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
