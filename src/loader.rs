@@ -110,9 +110,10 @@ impl AnimatedImageLoader {
     /// Use `included_bytes!` macro to load the bytes.
     /// # Example
     /// ```
-    /// # let mut app = App::new();
-    /// let bytes = include_bytes!("../assets/foo.gif");
-    /// let handle = AnimatedImageLoader::load_now_from_bytes(bytes, "gif", app).unwrap()
+    /// # use vleue_kinetoscope::AnimatedImageLoader;
+    /// # let mut app = bevy::prelude::App::new();
+    /// let bytes = include_bytes!("../assets/cube.gif");
+    /// let handle = AnimatedImageLoader::load_now_from_bytes(bytes, "cube.gif", app).unwrap();
     /// ```
     pub fn load_now_from_bytes(
         bytes: &[u8],
