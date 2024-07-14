@@ -113,6 +113,8 @@ impl AnimatedImageLoader {
     /// # use vleue_kinetoscope::AnimatedImageLoader;
     /// # let mut app = bevy::prelude::App::new();
     /// # app.add_plugins(bevy::prelude::AssetPlugin::default());
+    /// # app.init_asset::<bevy::prelude::Image>();
+    /// app.add_plugin(vleue_kinetoscope::AnimatedImagePlugin);
     /// let bytes = include_bytes!("../assets/cube.gif");
     /// let handle = AnimatedImageLoader::load_now_from_bytes(bytes, "cube.gif", &mut app).unwrap();
     /// ```
