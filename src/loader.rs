@@ -104,6 +104,34 @@ impl AnimatedImageLoader {
             .resource_mut::<Assets<AnimatedImage>>()
             .add(gif))
     }
+
+    /// For animated image that need to be loaded immediately, during app setup.
+    /// This can be useful if the video is meant to be played as a loading screen.
+    /// Use `included_bytes!` macro to load the bytes.
+    /// # Example
+    /// ```
+    /// # use vleue_kinetoscope::AnimatedImageLoader;
+    /// # use bevy::prelude::AssetApp;
+    /// # let mut app = bevy::prelude::App::new();
+    /// # app.add_plugins(bevy::prelude::AssetPlugin::default());
+    /// # app.init_asset::<bevy::prelude::Image>();
+    /// app.add_plugins(vleue_kinetoscope::AnimatedImagePlugin);
+    /// let bytes = include_bytes!("../assets/cube.gif");
+    /// let handle = AnimatedImageLoader::load_now_from_bytes(bytes, "cube.gif", &mut app).unwrap();
+    /// ```
+    pub fn load_now_from_bytes(
+        bytes: &[u8],
+        extension: &str,
+        app: &mut App,
+    ) -> Result<Handle<AnimatedImage>, AnimatedImageLoaderError> {
+        let mut images = app.world_mut().resource_mut::<Assets<Image>>();
+        let bytes = bytes.to_vec();
+        let gif = Self::internal_load(bytes, &mut *images, Path::new(&format!("foo.{extension}")))?;
+        Ok(app
+            .world_mut()
+            .resource_mut::<Assets<AnimatedImage>>()
+            .add(gif))
+    }
 }
 
 #[derive(Debug, Error)]
