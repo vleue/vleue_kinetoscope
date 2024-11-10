@@ -2,7 +2,7 @@ use std::io::Cursor;
 use std::path::Path;
 
 use bevy::asset::io::Reader;
-use bevy::asset::{AssetLoader, AsyncReadExt, LoadContext};
+use bevy::asset::{AssetLoader, LoadContext};
 use bevy::{prelude::*, render::render_asset::RenderAssetUsages};
 
 use image::{AnimationDecoder, DynamicImage};
@@ -148,11 +148,11 @@ impl AssetLoader for AnimatedImageLoader {
     type Settings = ();
     type Asset = AnimatedImage;
     type Error = AnimatedImageLoaderError;
-    async fn load<'a>(
-        &'a self,
-        reader: &'a mut Reader<'_>,
-        _settings: &'a Self::Settings,
-        load_context: &'a mut LoadContext<'_>,
+    async fn load(
+        &self,
+        reader: &mut dyn Reader,
+        _settings: &(),
+        load_context: &mut LoadContext<'_>,
     ) -> Result<Self::Asset, Self::Error> {
         let mut bytes = Vec::new();
         reader

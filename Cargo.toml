@@ -1,6 +1,6 @@
 [package]
 name = "vleue_kinetoscope"
-version = "0.2.0"
+version = "0.3.0-rc.1"
 edition = "2021"
 exclude = ["animated-gif.webp"]
 authors = ["François Mockers <francois.mockers@vleue.com>"]
@@ -22,21 +22,15 @@ webp = ["image/webp"]
 [dependencies]
 image = { version = "0.25", default-features = false }
 thiserror = "1.0"
-bevy = { version = "0.14.0", default-features = false, features = [
+bevy = { version = "0.15.0-rc.3", default-features = false, features = [
     "bevy_sprite",
 ] }
 
 [dev-dependencies]
-bevy = { version = "0.14.0", default-features = false, features = [
+bevy = { version = "0.15.0-rc.3", default-features = false, features = [
     "bevy_sprite",
     "bevy_ui",
     "bevy_winit",
     "default_font",
     "x11",
 ] }
-
-[patch.crates-io]
-# For webp support - https://github.com/image-rs/image/pull/2228
-image = { git = "https://github.com/image-rs/image" }
-# For webp support - https://github.com/image-rs/image-webp/pull/76
-image-webp = { git = "https://github.com/image-rs/image-webp" }

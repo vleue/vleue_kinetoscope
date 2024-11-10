@@ -36,8 +36,10 @@ pub struct Frame {
 }
 
 /// Component to help control the animation of an [`AnimatedImage`].
-#[derive(Component, Clone, Default)]
+#[derive(Component, Clone)]
+#[require(Sprite)]
 pub struct AnimatedImageController {
+    pub(crate) animated_image: Handle<AnimatedImage>,
     pub(crate) timer: Timer,
     pub(crate) play_count: usize,
     pub(crate) current_frame: usize,
@@ -45,6 +47,17 @@ pub struct AnimatedImageController {
 }
 
 impl AnimatedImageController {
+    /// Create a new controller for an animated image and starts playing it.
+    pub fn play(animated_image: Handle<AnimatedImage>) -> Self {
+        Self {
+            animated_image,
+            timer: Timer::default(),
+            play_count: 0,
+            current_frame: usize::MAX,
+            frame_count: 0,
+        }
+    }
+
     /// Number of times the animation has looped.
     pub fn play_count(&self) -> usize {
         self.play_count
@@ -67,27 +80,27 @@ impl AnimatedImageController {
 }
 
 /// A bundle of components to create an animated image.
-#[derive(Bundle, Clone, Default)]
-pub struct AnimatedImageBundle {
-    /// Handle to the [`AnimatedImage`] asset to be drawn.
-    pub animated_image: Handle<AnimatedImage>,
-    /// Controller for animation playback, given informations about current progress.
-    pub controller: AnimatedImageController,
-    /// Specifies the rendering properties of the sprite, such as color tint and flip.
-    pub sprite: Sprite,
-    /// The local transform of the sprite, relative to its parent.
-    pub transform: Transform,
-    /// The absolute transform of the sprite. This should generally not be written to directly.
-    pub global_transform: GlobalTransform,
-    /// A reference-counted handle to the image asset to be drawn.
-    pub texture: Handle<Image>,
-    /// User indication of whether an entity is visible
-    pub visibility: Visibility,
-    /// Inherited visibility of an entity.
-    pub inherited_visibility: InheritedVisibility,
-    /// Algorithmically-computed indication of whether an entity is visible and should be extracted for rendering
-    pub view_visibility: ViewVisibility,
-}
+// #[derive(Bundle, Clone, Default)]
+// pub struct AnimatedImageBundle {
+//     /// Handle to the [`AnimatedImage`] asset to be drawn.
+//     pub animated_image: Handle<AnimatedImage>,
+//     /// Controller for animation playback, given informations about current progress.
+//     pub controller: AnimatedImageController,
+//     /// Specifies the rendering properties of the sprite, such as color tint and flip.
+//     pub sprite: Sprite,
+//     /// The local transform of the sprite, relative to its parent.
+//     pub transform: Transform,
+//     /// The absolute transform of the sprite. This should generally not be written to directly.
+//     pub global_transform: GlobalTransform,
+//     /// A reference-counted handle to the image asset to be drawn.
+//     pub texture: Handle<Image>,
+//     /// User indication of whether an entity is visible
+//     pub visibility: Visibility,
+//     /// Inherited visibility of an entity.
+//     pub inherited_visibility: InheritedVisibility,
+//     /// Algorithmically-computed indication of whether an entity is visible and should be extracted for rendering
+//     pub view_visibility: ViewVisibility,
+// }
 
 /// A plugin for loading and displaying animated images (GIF or WebP).
 #[derive(Copy, Clone)]

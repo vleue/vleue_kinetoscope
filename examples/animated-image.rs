@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use vleue_kinetoscope::{AnimatedImageBundle, AnimatedImageController, AnimatedImagePlugin};
+use vleue_kinetoscope::{AnimatedImageController, AnimatedImagePlugin};
 
 fn main() {
     App::new()
@@ -27,7 +27,7 @@ impl std::fmt::Display for Image {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&Window>) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let window_width = window.single().width() / 2.0;
 
@@ -36,107 +36,98 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&
         .enumerate()
     {
         commands.spawn((
-            AnimatedImageBundle {
-                animated_image: asset_server.load(file),
-                transform: Transform::from_xyz(
-                    -window_width * ((-1.0 as f32).powi(i as i32)) / 2.0,
-                    -75.0,
-                    0.0,
-                ),
-                ..default()
-            },
+            AnimatedImageController::play(asset_server.load(file)),
+            Transform::from_xyz(
+                -window_width * ((-1.0 as f32).powi(i as i32)) / 2.0,
+                -75.0,
+                0.0,
+            ),
             kind,
         ));
 
         commands
-            .spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(50.0),
-                    height: Val::Percent(100.0),
-                    top: Val::Percent(10.0),
-                    left: Val::Percent(50.0 * (i as f32)),
-                    align_items: AlignItems::Start,
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
+            .spawn(Node {
+                width: Val::Percent(50.0),
+                height: Val::Percent(100.0),
+                top: Val::Percent(10.0),
+                left: Val::Percent(50.0 * (i as f32)),
+                align_items: AlignItems::Start,
+                justify_content: JustifyContent::Center,
                 ..default()
             })
             .with_children(|parent| {
-                parent.spawn((
-                    TextBundle::from_sections(vec![
-                        TextSection {
-                            value: format!("{}\n", kind),
-                            style: TextStyle {
-                                font_size: 60.0,
-                                ..default()
-                            },
+                parent.spawn((Text::default(), kind)).with_children(|text| {
+                    text.spawn((
+                        TextSpan(format!("{}\n", kind)),
+                        TextFont {
+                            font_size: 60.0,
+                            ..default()
                         },
-                        TextSection {
-                            value: "play count: ".to_string(),
-                            style: TextStyle {
-                                font_size: 50.0,
-                                ..default()
-                            },
+                    ));
+                    text.spawn((
+                        TextSpan("Play Count: ".to_string()),
+                        TextFont {
+                            font_size: 50.0,
+                            ..default()
                         },
-                        TextSection {
-                            value: "0".to_string(),
-                            style: TextStyle {
-                                font_size: 50.0,
-                                ..default()
-                            },
+                    ));
+                    text.spawn((
+                        TextSpan("0".to_string()),
+                        TextFont {
+                            font_size: 50.0,
+                            ..default()
                         },
-                        TextSection {
-                            value: "\ncurrent frame: ".to_string(),
-                            style: TextStyle {
-                                font_size: 30.0,
-                                ..default()
-                            },
+                    ));
+                    text.spawn((
+                        TextSpan("\ncurrent frame: ".to_string()),
+                        TextFont {
+                            font_size: 30.0,
+                            ..default()
                         },
-                        TextSection {
-                            value: "0".to_string(),
-                            style: TextStyle {
-                                font_size: 30.0,
-                                ..default()
-                            },
+                    ));
+                    text.spawn((
+                        TextSpan("0".to_string()),
+                        TextFont {
+                            font_size: 30.0,
+                            ..default()
                         },
-                        TextSection {
-                            value: " / ".to_string(),
-                            style: TextStyle {
-                                font_size: 30.0,
-                                ..default()
-                            },
+                    ));
+                    text.spawn((
+                        TextSpan("/".to_string()),
+                        TextFont {
+                            font_size: 30.0,
+                            ..default()
                         },
-                        TextSection {
-                            value: "0".to_string(),
-                            style: TextStyle {
-                                font_size: 30.0,
-                                ..default()
-                            },
+                    ));
+                    text.spawn((
+                        TextSpan("0".to_string()),
+                        TextFont {
+                            font_size: 30.0,
+                            ..default()
                         },
-                    ]),
-                    kind,
-                ));
+                    ));
+                });
             });
     }
 }
 
 fn log_updates(
-    mut texts: Query<(&mut Text, &Image)>,
+    texts: Query<(Entity, &Image), With<Text>>,
     playing_images: Query<(Ref<AnimatedImageController>, &Image)>,
+    mut text_writer: TextUiWriter,
 ) {
     for (animated_image, image_kind) in &playing_images {
         if animated_image.is_changed() {
-            for (mut text, text_kind) in &mut texts {
+            for (text, text_kind) in &texts {
                 if image_kind != text_kind {
                     continue;
                 }
-                text.sections[2].value = format!("{}", animated_image.play_count());
-                text.sections[4].value = format!("{:>4}", animated_image.current_frame());
-                text.sections[6].value = format!("{}", animated_image.frame_count() as i32 - 1);
+                *text_writer.text(text, 3) = format!("{}", animated_image.play_count());
+                *text_writer.text(text, 5) = format!("{:>4}", animated_image.current_frame());
+                *text_writer.text(text, 7) = format!("{}", animated_image.frame_count() as i32 - 1);
             }
         }
     }
-    // let gif = gif.single();
 }
 
 fn reset(

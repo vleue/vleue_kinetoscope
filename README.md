@@ -31,30 +31,29 @@ fn main() {
 
 ### Play an animated gif
 
-Spawn an entity with the bundle `AnimatedImageBundle`
+Spawn an entity with the component `AnimatedImageController`:
 
 ```rust
 use bevy::prelude::*;
 use vleue_kinetoscope::*;
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(AnimatedImageBundle {
-        animated_image: asset_server.load("Geneva_mechanism_6spoke_animation.gif"),
-        ..default()
-    });
+    commands.spawn(AnimatedImageController::play(asset_server.load("cube.gif")));
 }
 ```
 
-### WebP Support
 
-Animated WebP is currently broken in release versions of dependencies, and need patches to work properly:
+### Play an animated WebP
 
-```toml
-[patch.crates-io]
-# For webp support - https://github.com/image-rs/image/pull/2228
-image = { git = "https://github.com/image-rs/image" }
-# For webp support - https://github.com/image-rs/image-webp/pull/76
-image-webp = { git = "https://github.com/image-rs/image-webp" }
+Spawn an entity with the component `AnimatedImageController`:
+
+```rust
+use bevy::prelude::*;
+use vleue_kinetoscope::*;
+
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(AnimatedImageController::play(asset_server.load("cube.webp")));
+}
 ```
 
 ## Bevy Support
@@ -62,5 +61,6 @@ image-webp = { git = "https://github.com/image-rs/image-webp" }
 |Bevy|vleue_kinetoscope|
 |---|---|
 |main|main|
+|0.15|0.3|
 |0.14|0.2|
 |0.13|0.1|
