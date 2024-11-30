@@ -22,12 +22,14 @@ webp = ["image/webp"]
 [dependencies]
 image = { version = "0.25", default-features = false }
 thiserror = "1.0"
-bevy = { version = "0.15.0-rc.3", default-features = false, features = [
+bevy = { version = "0.15.0", default-features = false, features = [
     "bevy_sprite",
+    "png",         # TODO: change after https://github.com/bevyengine/bevy/issues/16563
 ] }
 
 [dev-dependencies]
-bevy = { version = "0.15.0-rc.3", default-features = false, features = [
+bevy = { version = "0.15.0", default-features = false, features = [
+    "bevy_window",
     "bevy_sprite",
     "bevy_ui",
     "bevy_winit",
