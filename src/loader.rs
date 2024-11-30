@@ -20,7 +20,7 @@ impl<A: Asset> SubAssetLoader<A> for &mut Assets<A> {
     }
 }
 
-impl<'a, A: Asset> SubAssetLoader<A> for &mut LoadContext<'a> {
+impl<A: Asset> SubAssetLoader<A> for &mut LoadContext<'_> {
     fn add_asset(&mut self, label: String, asset: A) -> Handle<A> {
         self.add_labeled_asset(label, asset)
     }
