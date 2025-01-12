@@ -77,6 +77,21 @@ impl AnimatedImageController {
         self.current_frame = usize::MAX;
         self.play_count = 0;
     }
+
+    /// Pause the animation.
+    pub fn pause(&mut self) {
+        self.timer.pause();
+    }
+
+    /// Unpause the animation.
+    pub fn unpause(&mut self) {
+        self.timer.unpause();
+    }
+
+    /// Returns true if the animation is paused.
+    pub fn paused(&mut self) -> bool {
+        self.timer.paused()
+    }
 }
 
 /// A plugin for loading and displaying animated images (GIF or WebP).
