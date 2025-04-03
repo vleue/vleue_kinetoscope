@@ -1,10 +1,10 @@
 use std::io::Cursor;
 use std::path::Path;
 
-use bevy::asset::io::Reader;
-use bevy::asset::{AssetLoader, LoadContext};
-use bevy::{prelude::*, render::render_asset::RenderAssetUsages};
+use bevy_app::App;
+use bevy_asset::{io::Reader, Asset, AssetLoader, Assets, Handle, LoadContext, RenderAssetUsages};
 
+use bevy_image::Image;
 use image::{AnimationDecoder, DynamicImage};
 use thiserror::Error;
 
