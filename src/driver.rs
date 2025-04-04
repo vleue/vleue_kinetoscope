@@ -1,6 +1,9 @@
 use std::time::Duration;
 
-use bevy::prelude::*;
+use bevy_asset::Assets;
+use bevy_ecs::system::{Query, Res};
+use bevy_sprite::Sprite;
+use bevy_time::{Time, Timer, TimerMode};
 
 use super::{AnimatedImage, AnimatedImageController};
 

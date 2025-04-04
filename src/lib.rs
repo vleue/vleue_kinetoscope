@@ -11,11 +11,16 @@
 #![allow(clippy::needless_doctest_main)]
 #![doc = include_str!("../README.md")]
 
-use bevy::prelude::*;
-
 mod driver;
 mod loader;
 
+use bevy_app::{App, Plugin, Update};
+use bevy_asset::{Asset, AssetApp, Handle};
+use bevy_ecs::component::Component;
+use bevy_image::Image;
+use bevy_reflect::TypePath;
+use bevy_sprite::Sprite;
+use bevy_time::Timer;
 use driver::image_driver;
 pub use loader::AnimatedImageLoader;
 

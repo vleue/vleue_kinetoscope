@@ -29,7 +29,7 @@ impl std::fmt::Display for Image {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&Window>) {
     commands.spawn(Camera2d);
 
-    let window_width = window.single().width() / 2.0;
+    let window_width = window.single().unwrap().width() / 2.0;
 
     for (i, (kind, file)) in [(Image::Gif, "cube.gif"), (Image::Webp, "cube.webp")]
         .into_iter()
