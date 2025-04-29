@@ -61,6 +61,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 |Bevy|vleue_kinetoscope|
 |---|---|
 |main|main|
+|0.16|0.4|
 |0.15|0.3|
 |0.14|0.2|
 |0.13|0.1|
