@@ -2,7 +2,7 @@ use std::io::Cursor;
 use std::path::Path;
 
 use bevy_app::App;
-use bevy_asset::{io::Reader, Asset, AssetLoader, Assets, Handle, LoadContext, RenderAssetUsages};
+use bevy_asset::{Asset, AssetLoader, Assets, Handle, LoadContext, RenderAssetUsages, io::Reader};
 
 use bevy_image::Image;
 use image::{AnimationDecoder, DynamicImage};
