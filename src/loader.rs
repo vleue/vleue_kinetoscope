@@ -42,10 +42,7 @@ impl AnimatedImageLoader {
                 {
                     let decoder = image::codecs::gif::GifDecoder::new(Cursor::new(bytes))
                         .map_err(AnimatedImageLoaderError::DecodingError)?;
-                    let frames = decoder.into_frames();
-                    frames
-                        .collect_frames()
-                        .map_err(AnimatedImageLoaderError::DecodingError)?
+                    decoder.into_frames()
                 }
                 #[cfg(not(feature = "gif"))]
                 {
@@ -59,10 +56,7 @@ impl AnimatedImageLoader {
                 {
                     let decoder = image::codecs::webp::WebPDecoder::new(Cursor::new(bytes))
                         .map_err(AnimatedImageLoaderError::DecodingError)?;
-                    let frames = decoder.into_frames();
-                    frames
-                        .collect_frames()
-                        .map_err(AnimatedImageLoaderError::DecodingError)?
+                    decoder.into_frames()
                 }
                 #[cfg(not(feature = "webp"))]
                 {
@@ -75,7 +69,8 @@ impl AnimatedImageLoader {
         };
 
         let mut frames = vec![];
-        for frame in frames_from_file.iter() {
+        for frame in frames_from_file {
+            let frame = frame.map_err(AnimatedImageLoaderError::DecodingError)?;
             let image = Image::from_dynamic(
                 DynamicImage::ImageRgba8(frame.buffer().clone()),
                 true,
