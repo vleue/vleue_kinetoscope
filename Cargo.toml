@@ -1,7 +1,7 @@
 [package]
 name = "vleue_kinetoscope"
 version = "0.4.0-rc.1"
-edition = "2021"
+edition = "2024"
 exclude = ["animated-gif.webp"]
 authors = ["François Mockers <francois.mockers@vleue.com>"]
 description = "Animated GIF player for Bevy"
@@ -22,13 +22,13 @@ webp = ["image/webp"]
 [dependencies]
 image = { version = "0.25", default-features = false }
 thiserror = "1.0"
-bevy_ecs = { version = "0.16.0-rc.3", default-features = false }
-bevy_app = { version = "0.16.0-rc.3", default-features = false }
-bevy_asset = { version = "0.16.0-rc.3", default-features = false }
-bevy_image = { version = "0.16.0-rc.3", default-features = false }
-bevy_reflect = { version = "0.16.0-rc.3", default-features = false }
-bevy_time = { version = "0.16.0-rc.3", default-features = false }
-bevy_sprite = { version = "0.16.0-rc.3", default-features = false }
+bevy_ecs = { version = "0.16.0", default-features = false }
+bevy_app = { version = "0.16.0", default-features = false }
+bevy_asset = { version = "0.16.0", default-features = false }
+bevy_image = { version = "0.16.0", default-features = false }
+bevy_reflect = { version = "0.16.0", default-features = false }
+bevy_time = { version = "0.16.0", default-features = false }
+bevy_sprite = { version = "0.16.0", default-features = false }
 
 
 [dev-dependencies]
