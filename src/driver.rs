@@ -3,24 +3,29 @@ use std::time::Duration;
 use bevy_asset::Assets;
 #[cfg(feature = "streaming")]
 use bevy_ecs::system::ResMut;
-use bevy_ecs::system::{Query, Res};
+use bevy_ecs::{
+    entity::Entity,
+    system::{Commands, Query, Res},
+};
 #[cfg(feature = "streaming")]
 use bevy_image::Image;
 use bevy_sprite::Sprite;
 use bevy_time::{Time, Timer, TimerMode};
 
+use crate::AnimationPlayed;
 #[cfg(feature = "streaming")]
 use crate::{Frame, StreamingAnimatedImage, StreamingAnimatedImageController};
 
 use super::{AnimatedImage, AnimatedImageController};
 
 pub(crate) fn image_driver(
-    mut playing_images: Query<(&mut AnimatedImageController, &mut Sprite)>,
+    mut commands: Commands,
+    mut playing_images: Query<(Entity, &mut AnimatedImageController, &mut Sprite)>,
     animated_images: Res<Assets<AnimatedImage>>,
     time: Res<Time>,
 ) {
     // don't rely on changed or added filter as the asset can be not yet loaded at the time the component is added
-    for (mut controller, mut image) in &mut playing_images {
+    for (entity, mut controller, mut image) in &mut playing_images {
         let Some(animated_image) = animated_images.get(&controller.animated_image) else {
             continue;
         };
@@ -49,6 +54,9 @@ pub(crate) fn image_driver(
             controller.current_frame = new_index;
             if new_index == 0 {
                 controller.play_count += 1;
+                commands
+                    .entity(entity)
+                    .trigger(AnimationPlayed(controller.play_count));
             }
         }
     }
@@ -56,13 +64,14 @@ pub(crate) fn image_driver(
 
 #[cfg(feature = "streaming")]
 pub(crate) fn streaming_image_driver(
-    mut playing_images: Query<(&mut StreamingAnimatedImageController, &mut Sprite)>,
+    mut commands: Commands,
+    mut playing_images: Query<(Entity, &mut StreamingAnimatedImageController, &mut Sprite)>,
     mut animated_images: ResMut<Assets<StreamingAnimatedImage>>,
     mut images: ResMut<Assets<Image>>,
     time: Res<Time>,
 ) {
     // don't rely on changed or added filter as the asset can be not yet loaded at the time the component is added
-    for (mut controller, mut image) in &mut playing_images {
+    for (entity, mut controller, mut image) in &mut playing_images {
         if controller.paused() {
             continue;
         }
@@ -88,6 +97,7 @@ pub(crate) fn streaming_image_driver(
             let next_frame = match animated_image.next(images.as_mut()) {
                 crate::StreamingFrame::Finished => {
                     controller.pause();
+                    commands.entity(entity).trigger(AnimationPlayed(1));
                     continue;
                 }
                 crate::StreamingFrame::Waiting => {
