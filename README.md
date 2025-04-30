@@ -10,7 +10,6 @@ Animated GIF and WebP player for Bevy.
 
 ![animated-gif](https://raw.githubusercontent.com/vleue/vleue_kinetoscope/main/animated-gif.webp)
 
-
 ## Usage
 
 ### System setup
@@ -23,8 +22,7 @@ use vleue_kinetoscope::AnimatedImagePlugin;
 
 fn main() {
     App::new()
-        // Usually included with `DefaultPlugins`
-        .add_plugins(AssetPlugin::default())
+        .add_plugins(DefaultPlugins)
         .add_plugins(AnimatedImagePlugin);
 }
 ```
@@ -38,10 +36,11 @@ use bevy::prelude::*;
 use vleue_kinetoscope::*;
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(Camera2d);
+
     commands.spawn(AnimatedImageController::play(asset_server.load("cube.gif")));
 }
 ```
-
 
 ### Play an animated WebP
 
@@ -52,16 +51,37 @@ use bevy::prelude::*;
 use vleue_kinetoscope::*;
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(Camera2d);
+
     commands.spawn(AnimatedImageController::play(asset_server.load("cube.webp")));
 }
 ```
 
+### Streaming animations
+
+It is possible to stream an animated GIF or WebP, so that it's not loaded completely into Memory:
+
+```rust
+use bevy::prelude::*;
+use vleue_kinetoscope::*;
+
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(Camera2d);
+
+    commands.spawn(StreamingAnimatedImageController::stream(asset_server.load("big-buck-bunny.webp")));
+}
+```
+
+Streaming animated images are only played once, and can't loop.
+
+Wasm is not yet supported for streaming animations.
+
 ## Bevy Support
 
-|Bevy|vleue_kinetoscope|
-|---|---|
-|main|main|
-|0.16|0.4|
-|0.15|0.3|
-|0.14|0.2|
-|0.13|0.1|
+| Bevy | vleue_kinetoscope |
+| ---- | ----------------- |
+| main | main              |
+| 0.16 | 0.4               |
+| 0.15 | 0.3               |
+| 0.14 | 0.2               |
+| 0.13 | 0.1               |
