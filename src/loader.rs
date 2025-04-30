@@ -1,14 +1,15 @@
-use std::io::Cursor;
-use std::path::Path;
+use std::{io::Cursor, path::Path};
 
 use bevy_app::App;
 use bevy_asset::{Asset, AssetLoader, Assets, Handle, LoadContext, RenderAssetUsages, io::Reader};
-
 use bevy_image::Image;
-use image::{AnimationDecoder, DynamicImage};
+
+use image::{AnimationDecoder, DynamicImage, Frames};
 use thiserror::Error;
 
-use super::{AnimatedImage, Frame};
+use crate::FrameChannel;
+
+use super::{AnimatedImage, Frame, StreamingAnimatedImage};
 
 trait SubAssetLoader<A: Asset> {
     fn add_asset(&mut self, label: String, asset: A) -> Handle<A>;
@@ -36,7 +37,7 @@ impl AnimatedImageLoader {
         mut images: impl SubAssetLoader<Image>,
         path: &Path,
     ) -> Result<AnimatedImage, AnimatedImageLoaderError> {
-        let frames_from_file = match path.extension() {
+        let frames_from_file: Frames<'_> = match path.extension() {
             Some(ext) if ext == "gif" => {
                 #[cfg(feature = "gif")]
                 {
@@ -46,7 +47,7 @@ impl AnimatedImageLoader {
                 }
                 #[cfg(not(feature = "gif"))]
                 {
-                    return Err(AnimatedImageLoaderError::UnsupportedExtension(
+                    return Err(AnimatedImageLoaderError::UnsupportedImageFormat(
                         "GIF".to_string(),
                     ));
                 }
@@ -60,7 +61,7 @@ impl AnimatedImageLoader {
                 }
                 #[cfg(not(feature = "webp"))]
                 {
-                    return Err(AnimatedImageLoaderError::UnsupportedExtension(
+                    return Err(AnimatedImageLoaderError::UnsupportedImageFormat(
                         "WebP".to_string(),
                     ));
                 }
@@ -142,6 +143,123 @@ pub enum AnimatedImageLoaderError {
 impl AssetLoader for AnimatedImageLoader {
     type Settings = ();
     type Asset = AnimatedImage;
+    type Error = AnimatedImageLoaderError;
+    async fn load(
+        &self,
+        reader: &mut dyn Reader,
+        _settings: &(),
+        load_context: &mut LoadContext<'_>,
+    ) -> Result<Self::Asset, Self::Error> {
+        let mut bytes = Vec::new();
+        reader
+            .read_to_end(&mut bytes)
+            .await
+            .map_err(AnimatedImageLoaderError::IoError)?;
+        let path = load_context.path().to_owned();
+        let gif = Self::internal_load(bytes, load_context, &path)?;
+        Ok(gif)
+    }
+
+    fn extensions(&self) -> &[&str] {
+        &[
+            #[cfg(feature = "gif")]
+            "gif",
+            #[cfg(feature = "webp")]
+            "webp",
+        ]
+    }
+}
+
+/// Loader for animated images (GIF and WebP).
+#[derive(Default, Clone, Copy)]
+pub struct StreamingAnimatedImageLoader;
+
+impl StreamingAnimatedImageLoader {
+    fn internal_load(
+        bytes: Vec<u8>,
+        mut images: impl SubAssetLoader<Image>,
+        path: &Path,
+    ) -> Result<StreamingAnimatedImage, AnimatedImageLoaderError> {
+        let (sender, receiver) = crossbeam_channel::bounded(2);
+
+        let extension = path.extension().map(|s| s.to_ascii_lowercase());
+        std::thread::spawn(move || {
+            let mut frames: Frames<'_> = match extension {
+                Some(ext) if ext == "gif" => {
+                    #[cfg(feature = "gif")]
+                    {
+                        let decoder = image::codecs::gif::GifDecoder::new(Cursor::new(bytes))
+                            .map_err(AnimatedImageLoaderError::DecodingError)
+                            .unwrap();
+                        decoder.into_frames()
+                    }
+                    #[cfg(not(feature = "gif"))]
+                    {
+                        panic!(
+                            "{}",
+                            AnimatedImageLoaderError::UnsupportedImageFormat("GIF".to_string(),)
+                        );
+                    }
+                }
+                Some(ext) if ext == "webp" => {
+                    #[cfg(feature = "webp")]
+                    {
+                        let decoder = image::codecs::webp::WebPDecoder::new(Cursor::new(bytes))
+                            .map_err(AnimatedImageLoaderError::DecodingError)
+                            .unwrap();
+                        decoder.into_frames()
+                    }
+                    #[cfg(not(feature = "webp"))]
+                    {
+                        panic!(
+                            "{}",
+                            AnimatedImageLoaderError::UnsupportedImageFormat("WebP".to_string(),)
+                        );
+                    }
+                }
+                _ => unreachable!("unsupported extension for {:?}", extension),
+            };
+            loop {
+                let Some(next_frame) = frames.next() else {
+                    let _ = sender.send(FrameChannel::Finished);
+                    break;
+                };
+                let next_frame = next_frame.unwrap();
+                let _ = sender.send(FrameChannel::Frame(next_frame));
+            }
+        });
+
+        let buffered = (0..5)
+            .map_while(|i| receiver.recv().ok().map(|f| (i, f)))
+            .map_while(|(i, frame)| {
+                let frame = match frame {
+                    FrameChannel::Frame(frame) => frame,
+                    FrameChannel::Finished => return None,
+                };
+                let image = Image::from_dynamic(
+                    DynamicImage::ImageRgba8(frame.buffer().clone()),
+                    true,
+                    RenderAssetUsages::RENDER_WORLD,
+                );
+                let handle = images.add_asset(format!("frame-{}", i), image);
+                Some(Some(Frame {
+                    delay: frame.delay().numer_denom_ms(),
+                    image: handle.clone(),
+                }))
+            })
+            .collect();
+
+        Ok(StreamingAnimatedImage {
+            // frames: Arc::new(Mutex::new(frames)),
+            frame_receiver: receiver,
+            buffered,
+        })
+    }
+}
+
+impl AssetLoader for StreamingAnimatedImageLoader {
+    type Settings = ();
+    type Asset = StreamingAnimatedImage;
     type Error = AnimatedImageLoaderError;
     async fn load(
         &self,
