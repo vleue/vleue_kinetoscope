@@ -16,7 +16,7 @@ Animated GIF and WebP player for Bevy.
 
 Add the plugin to your app:
 
-```rust
+```rust,no_run
 use bevy::prelude::*;
 use vleue_kinetoscope::AnimatedImagePlugin;
 
