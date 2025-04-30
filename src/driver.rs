@@ -1,11 +1,15 @@
 use std::time::Duration;
 
 use bevy_asset::Assets;
-use bevy_ecs::system::{Query, Res, ResMut};
+#[cfg(feature = "streaming")]
+use bevy_ecs::system::ResMut;
+use bevy_ecs::system::{Query, Res};
+#[cfg(feature = "streaming")]
 use bevy_image::Image;
 use bevy_sprite::Sprite;
 use bevy_time::{Time, Timer, TimerMode};
 
+#[cfg(feature = "streaming")]
 use crate::{Frame, StreamingAnimatedImage, StreamingAnimatedImageController};
 
 use super::{AnimatedImage, AnimatedImageController};
@@ -50,6 +54,7 @@ pub(crate) fn image_driver(
     }
 }
 
+#[cfg(feature = "streaming")]
 pub(crate) fn streaming_image_driver(
     mut playing_images: Query<(&mut StreamingAnimatedImageController, &mut Sprite)>,
     mut animated_images: ResMut<Assets<StreamingAnimatedImage>>,

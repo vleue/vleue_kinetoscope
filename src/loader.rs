@@ -3,13 +3,20 @@ use std::{io::Cursor, path::Path};
 use bevy_app::App;
 use bevy_asset::{Asset, AssetLoader, Assets, Handle, LoadContext, RenderAssetUsages, io::Reader};
 use bevy_image::Image;
+#[cfg(feature = "streaming")]
+use bevy_tasks::*;
 
 use image::{AnimationDecoder, DynamicImage, Frames};
+#[cfg(feature = "streaming")]
+use smallvec::SmallVec;
 use thiserror::Error;
 
-use crate::FrameChannel;
+#[cfg(feature = "streaming")]
+use crate::{FRAME_BUFFER_SIZE, FrameChannel};
 
-use super::{AnimatedImage, Frame, StreamingAnimatedImage};
+#[cfg(feature = "streaming")]
+use super::StreamingAnimatedImage;
+use super::{AnimatedImage, Frame};
 
 trait SubAssetLoader<A: Asset> {
     fn add_asset(&mut self, label: String, asset: A) -> Handle<A>;
@@ -172,18 +179,20 @@ impl AssetLoader for AnimatedImageLoader {
 
 /// Loader for animated images (GIF and WebP).
 #[derive(Default, Clone, Copy)]
+#[cfg(feature = "streaming")]
 pub struct StreamingAnimatedImageLoader;
 
+#[cfg(feature = "streaming")]
 impl StreamingAnimatedImageLoader {
     fn internal_load(
         bytes: Vec<u8>,
         mut images: impl SubAssetLoader<Image>,
         path: &Path,
     ) -> Result<StreamingAnimatedImage, AnimatedImageLoaderError> {
-        let (sender, receiver) = crossbeam_channel::bounded(2);
+        let (sender, receiver) = crossbeam_channel::bounded(3);
 
         let extension = path.extension().map(|s| s.to_ascii_lowercase());
-        std::thread::spawn(move || {
+        let task = AsyncComputeTaskPool::get().spawn(async move {
             let mut frames: Frames<'_> = match extension {
                 Some(ext) if ext == "gif" => {
                     #[cfg(feature = "gif")]
@@ -229,8 +238,11 @@ impl StreamingAnimatedImageLoader {
             }
         });
 
-        let buffered = (0..5)
-            .map_while(|i| receiver.recv().ok().map(|f| (i, f)))
+        task.detach();
+
+        let mut buffered: SmallVec<_> = std::iter::repeat(())
+            .enumerate()
+            .filter_map(|(i, _)| receiver.try_recv().ok().map(|f| (i, f)))
             .map_while(|(i, frame)| {
                 let frame = match frame {
                     FrameChannel::Frame(frame) => frame,
@@ -247,7 +259,9 @@ impl StreamingAnimatedImageLoader {
                     image: handle.clone(),
                 }))
             })
+            .take(FRAME_BUFFER_SIZE)
             .collect();
+        buffered.reverse();
 
         Ok(StreamingAnimatedImage {
             // frames: Arc::new(Mutex::new(frames)),
@@ -257,6 +271,7 @@ impl StreamingAnimatedImageLoader {
     }
 }
 
+#[cfg(feature = "streaming")]
 impl AssetLoader for StreamingAnimatedImageLoader {
     type Settings = ();
     type Asset = StreamingAnimatedImage;

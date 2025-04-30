@@ -15,18 +15,27 @@ mod driver;
 mod loader;
 
 use bevy_app::{App, Plugin, Update};
-use bevy_asset::{Asset, AssetApp, Assets, Handle, RenderAssetUsages};
+use bevy_asset::{Asset, AssetApp, Handle};
+#[cfg(feature = "streaming")]
+use bevy_asset::{Assets, RenderAssetUsages};
 use bevy_ecs::component::Component;
 use bevy_image::Image;
 use bevy_reflect::TypePath;
 use bevy_sprite::Sprite;
 use bevy_time::Timer;
 
+#[cfg(feature = "streaming")]
 use crossbeam_channel::Receiver;
-use driver::{image_driver, streaming_image_driver};
-pub use loader::{AnimatedImageLoader, StreamingAnimatedImageLoader};
+use driver::image_driver;
+#[cfg(feature = "streaming")]
+use driver::streaming_image_driver;
+pub use loader::AnimatedImageLoader;
+#[cfg(feature = "streaming")]
+pub use loader::StreamingAnimatedImageLoader;
 
+#[cfg(feature = "streaming")]
 use image::DynamicImage;
+#[cfg(feature = "streaming")]
 use smallvec::SmallVec;
 
 /// An animated image asset.
@@ -36,20 +45,26 @@ pub struct AnimatedImage {
     pub frames: Vec<Frame>,
 }
 
+#[cfg(feature = "streaming")]
+const FRAME_BUFFER_SIZE: usize = 5;
+
 /// An animated image asset.
 #[derive(Asset, TypePath)]
+#[cfg(feature = "streaming")]
 pub struct StreamingAnimatedImage {
     // frames: Arc<Mutex<Frames<'static>>>,
     frame_receiver: Receiver<FrameChannel>,
     // frame_command: Sender<FrameCommand>,
-    buffered: SmallVec<[Option<Frame>; 5]>,
+    buffered: SmallVec<[Option<Frame>; FRAME_BUFFER_SIZE]>,
 }
 
+#[cfg(feature = "streaming")]
 enum FrameChannel {
     Frame(image::Frame),
     Finished,
 }
 
+#[cfg(feature = "streaming")]
 impl StreamingAnimatedImage {
     /// Get the next frame of the animated image.
     pub fn next(&mut self, images: &mut Assets<Image>) -> StreamingFrame {
@@ -108,6 +123,7 @@ pub struct Frame {
 
 /// Frame of an animated image.
 #[derive(Clone, Debug)]
+#[cfg(feature = "streaming")]
 pub enum StreamingFrame {
     /// Stream is finished
     Finished,
@@ -136,6 +152,7 @@ pub struct AnimatedImageController {
 /// Component to help control the animation of an [`StreamingAnimatedImage`].
 #[derive(Component, Clone)]
 #[require(Sprite)]
+#[cfg(feature = "streaming")]
 pub struct StreamingAnimatedImageController {
     pub(crate) animated_image: Handle<StreamingAnimatedImage>,
     pub(crate) timer: Timer,
@@ -190,6 +207,7 @@ impl AnimatedImageController {
     }
 }
 
+#[cfg(feature = "streaming")]
 impl StreamingAnimatedImageController {
     /// Create a new controller for an animated image and starts playing it.
     pub fn play(animated_image: Handle<StreamingAnimatedImage>) -> Self {
@@ -228,9 +246,11 @@ pub struct AnimatedImagePlugin;
 impl Plugin for AnimatedImagePlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<AnimatedImage>()
-            .init_asset::<StreamingAnimatedImage>()
             .init_asset_loader::<AnimatedImageLoader>()
+            .add_systems(Update, image_driver);
+        #[cfg(feature = "streaming")]
+        app.init_asset::<StreamingAnimatedImage>()
             .init_asset_loader::<StreamingAnimatedImageLoader>()
-            .add_systems(Update, (image_driver, streaming_image_driver));
+            .add_systems(Update, streaming_image_driver);
     }
 }

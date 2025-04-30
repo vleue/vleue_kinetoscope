@@ -14,10 +14,10 @@ readme = "README.md"
 categories = ["game-development"]
 
 [features]
-default = ["gif", "webp"]
+default = ["gif", "webp", "streaming"]
 gif = ["image/gif"]
 webp = ["image/webp"]
-
+streaming = ["bevy_tasks/multi_threaded"]
 
 [dependencies]
 image = { version = "0.25", default-features = false }
@@ -30,12 +30,13 @@ bevy_app = { version = "0.16.0", default-features = false }
 bevy_asset = { version = "0.16.0", default-features = false }
 bevy_image = { version = "0.16.0", default-features = false }
 bevy_reflect = { version = "0.16.0", default-features = false }
+bevy_tasks = { version = "0.16.0", default-features = false, optional = true }
 bevy_time = { version = "0.16.0", default-features = false }
 bevy_sprite = { version = "0.16.0", default-features = false }
 
 
 [dev-dependencies]
-bevy = { version = "0.16.0-rc.3", default-features = false, features = [
+bevy = { version = "0.16.0", default-features = false, features = [
     "bevy_window",
     "bevy_log",
     "bevy_sprite",
