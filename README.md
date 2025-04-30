@@ -68,7 +68,7 @@ use vleue_kinetoscope::*;
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
 
-    commands.spawn(StreamingAnimatedImageController::stream(asset_server.load("big-buck-bunny.webp")));
+    commands.spawn(StreamingAnimatedImageController::play(asset_server.load("big-buck-bunny.webp")));
 }
 ```
 
