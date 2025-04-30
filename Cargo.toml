@@ -1,6 +1,6 @@
 [package]
 name = "vleue_kinetoscope"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2024"
 exclude = ["animated-gif.webp", "assets/big-buck-bunny.webp"]
 authors = ["François Mockers <francois.mockers@vleue.com>"]
