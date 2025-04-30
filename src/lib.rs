@@ -18,7 +18,7 @@ use bevy_app::{App, Plugin, Update};
 use bevy_asset::{Asset, AssetApp, Handle};
 #[cfg(feature = "streaming")]
 use bevy_asset::{Assets, RenderAssetUsages};
-use bevy_ecs::component::Component;
+use bevy_ecs::{component::Component, event::Event};
 use bevy_image::Image;
 use bevy_reflect::TypePath;
 use bevy_sprite::Sprite;
@@ -246,6 +246,7 @@ pub struct AnimatedImagePlugin;
 impl Plugin for AnimatedImagePlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<AnimatedImage>()
+            .add_event::<AnimationPlayed>()
             .init_asset_loader::<AnimatedImageLoader>()
             .add_systems(Update, image_driver);
         #[cfg(feature = "streaming")]
@@ -254,3 +255,7 @@ impl Plugin for AnimatedImagePlugin {
             .add_systems(Update, streaming_image_driver);
     }
 }
+
+/// Event triggered when an animation finishes playing.
+#[derive(Event, Debug, Copy, Clone)]
+pub struct AnimationPlayed(pub usize);
