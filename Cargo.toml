@@ -25,22 +25,22 @@ thiserror = "1.0"
 smallvec = "1.15"
 log = "0.4"
 crossbeam-channel = "0.5"
-bevy_ecs = { version = "0.16.0", default-features = false }
-bevy_app = { version = "0.16.0", default-features = false }
-bevy_asset = { version = "0.16.0", default-features = false }
-bevy_image = { version = "0.16.0", default-features = false }
-bevy_reflect = { version = "0.16.0", default-features = false }
-bevy_tasks = { version = "0.16.0", default-features = false, optional = true }
-bevy_time = { version = "0.16.0", default-features = false }
-bevy_sprite = { version = "0.16.0", default-features = false }
+bevy_ecs = { version = "0.17.0", default-features = false }
+bevy_app = { version = "0.17.0", default-features = false }
+bevy_asset = { version = "0.17.0", default-features = false }
+bevy_image = { version = "0.17.0", default-features = false }
+bevy_reflect = { version = "0.17.0", default-features = false }
+bevy_tasks = { version = "0.17.0", default-features = false, optional = true }
+bevy_time = { version = "0.17.0", default-features = false }
+bevy_sprite = { version = "0.17.0", default-features = false }
 
 
 [dev-dependencies]
-bevy = { version = "0.16.0", default-features = false, features = [
+bevy = { version = "0.17.0", default-features = false, features = [
     "bevy_window",
     "bevy_log",
     "bevy_sprite",
-    "bevy_ui",
+    "bevy_ui_render",
     "bevy_winit",
     "default_font",
     "x11",

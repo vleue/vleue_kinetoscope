@@ -17,7 +17,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .spawn(StreamingAnimatedImageController::play(
             asset_server.load("big-buck-bunny.webp"),
         ))
-        .observe(|_: Trigger<AnimationPlayed>, mut commands: Commands| {
-            commands.send_event(AppExit::Success);
+        .observe(|_: On<AnimationPlayed>, mut commands: Commands| {
+            commands.write_message(AppExit::Success);
         });
 }

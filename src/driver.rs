@@ -40,7 +40,7 @@ pub(crate) fn image_driver(
                 TimerMode::Repeating,
             );
             controller.frame_count = animated_image.frames.len();
-            image.image = animated_image.frames[0].image.clone_weak();
+            image.image = animated_image.frames[0].image.clone();
         }
         if controller.timer.tick(time.delta()).just_finished() {
             let remaining = controller.timer.elapsed();
@@ -50,13 +50,14 @@ pub(crate) fn image_driver(
                 TimerMode::Repeating,
             );
             controller.timer.set_elapsed(remaining);
-            image.image = animated_image.frames[new_index].image.clone_weak();
+            image.image = animated_image.frames[new_index].image.clone();
             controller.current_frame = new_index;
             if new_index == 0 {
                 controller.play_count += 1;
-                commands
-                    .entity(entity)
-                    .trigger(AnimationPlayed(controller.play_count));
+                commands.entity(entity).trigger(|target| AnimationPlayed {
+                    entity: target,
+                    play_count: controller.play_count,
+                });
             }
         }
     }
@@ -92,12 +93,15 @@ pub(crate) fn streaming_image_driver(
             );
             image.image = first_frame.image;
         }
-        if controller.timer.tick(time.delta()).finished() {
+        if controller.timer.tick(time.delta()).is_finished() {
             let remaining = controller.timer.elapsed();
             let next_frame = match animated_image.next(images.as_mut()) {
                 crate::StreamingFrame::Finished => {
                     controller.pause();
-                    commands.entity(entity).trigger(AnimationPlayed(1));
+                    commands.entity(entity).trigger(|target| AnimationPlayed {
+                        entity: target,
+                        play_count: 1,
+                    });
                     continue;
                 }
                 crate::StreamingFrame::Waiting => {
