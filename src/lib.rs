@@ -18,7 +18,7 @@ use bevy_app::{App, Plugin, Update};
 use bevy_asset::{Asset, AssetApp, Handle};
 #[cfg(feature = "streaming")]
 use bevy_asset::{Assets, RenderAssetUsages};
-use bevy_ecs::{component::Component, event::Event};
+use bevy_ecs::{component::Component, entity::Entity, event::EntityEvent};
 use bevy_image::Image;
 use bevy_reflect::TypePath;
 use bevy_sprite::Sprite;
@@ -202,8 +202,8 @@ impl AnimatedImageController {
     }
 
     /// Returns true if the animation is paused.
-    pub fn paused(&mut self) -> bool {
-        self.timer.paused()
+    pub fn is_paused(&mut self) -> bool {
+        self.timer.is_paused()
     }
 }
 
@@ -234,8 +234,8 @@ impl StreamingAnimatedImageController {
     }
 
     /// Returns true if the animation is paused.
-    pub fn paused(&mut self) -> bool {
-        self.timer.paused()
+    pub fn is_paused(&mut self) -> bool {
+        self.timer.is_paused()
     }
 }
 
@@ -246,7 +246,6 @@ pub struct AnimatedImagePlugin;
 impl Plugin for AnimatedImagePlugin {
     fn build(&self, app: &mut App) {
         app.init_asset::<AnimatedImage>()
-            .add_event::<AnimationPlayed>()
             .init_asset_loader::<AnimatedImageLoader>()
             .add_systems(Update, image_driver);
         #[cfg(feature = "streaming")]
@@ -257,5 +256,5 @@ impl Plugin for AnimatedImagePlugin {
 }
 
 /// Event triggered when an animation finishes playing.
-#[derive(Event, Debug, Copy, Clone)]
-pub struct AnimationPlayed(pub usize);
+#[derive(EntityEvent, Debug, Copy, Clone)]
+pub struct AnimationPlayed(pub Entity);
