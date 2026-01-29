@@ -3,6 +3,7 @@ use std::{io::Cursor, path::Path};
 use bevy_app::App;
 use bevy_asset::{Asset, AssetLoader, Assets, Handle, LoadContext, RenderAssetUsages, io::Reader};
 use bevy_image::Image;
+use bevy_reflect::TypePath;
 #[cfg(feature = "streaming")]
 use bevy_tasks::*;
 
@@ -35,7 +36,7 @@ impl<A: Asset> SubAssetLoader<A> for &mut LoadContext<'_> {
 }
 
 /// Loader for animated images (GIF and WebP).
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, TypePath)]
 pub struct AnimatedImageLoader;
 
 impl AnimatedImageLoader {
@@ -163,7 +164,7 @@ impl AssetLoader for AnimatedImageLoader {
             .await
             .map_err(AnimatedImageLoaderError::IoError)?;
         let path = load_context.path().to_owned();
-        let gif = Self::internal_load(bytes, load_context, &path)?;
+        let gif = Self::internal_load(bytes, load_context, path.path())?;
         Ok(gif)
     }
 
@@ -178,7 +179,7 @@ impl AssetLoader for AnimatedImageLoader {
 }
 
 /// Loader for animated images (GIF and WebP).
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, TypePath)]
 #[cfg(feature = "streaming")]
 pub struct StreamingAnimatedImageLoader;
 
@@ -288,7 +289,7 @@ impl AssetLoader for StreamingAnimatedImageLoader {
             .await
             .map_err(AnimatedImageLoaderError::IoError)?;
         let path = load_context.path().to_owned();
-        let gif = Self::internal_load(bytes, load_context, &path)?;
+        let gif = Self::internal_load(bytes, load_context, path.path())?;
         Ok(gif)
     }
 
