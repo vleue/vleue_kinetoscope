@@ -37,11 +37,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, window: Query<&
     {
         commands.spawn((
             AnimatedImageController::play(asset_server.load(file)),
-            Transform::from_xyz(
-                -window_width * (-1.0_f32).powi(i as i32) / 2.0,
-                -75.0,
-                0.0,
-            ),
+            Transform::from_xyz(-window_width * (-1.0_f32).powi(i as i32) / 2.0, -75.0, 0.0),
             kind,
         ));
 
