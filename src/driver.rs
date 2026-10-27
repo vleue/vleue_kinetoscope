@@ -73,7 +73,7 @@ pub(crate) fn streaming_image_driver(
         if controller.is_paused() {
             continue;
         }
-        let Some(animated_image) = animated_images.get_mut(&controller.animated_image) else {
+        let Some(mut animated_image) = animated_images.get_mut(&controller.animated_image) else {
             continue;
         };
 

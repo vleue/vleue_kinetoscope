@@ -81,6 +81,7 @@ Wasm is not yet supported for streaming animations.
 | Bevy | vleue_kinetoscope |
 | ---- | ----------------- |
 | main | main              |
+| 0.20 | 0.6               |
 | 0.18 | 0.5               |
 | 0.16 | 0.4               |
 | 0.15 | 0.3               |
